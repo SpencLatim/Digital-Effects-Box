@@ -1,0 +1,232 @@
+/*
+ *  Copyright 2010 by Texas Instruments Incorporated.
+ *  All rights reserved. Property of Texas Instruments Incorporated.
+ *  Restricted rights to use, duplicate or disclose this code are
+ *  granted through contract.
+ *
+ */
+/*
+ *  ======== hello.tcf ========
+ *  Configuration script used to generate the example's configuration files
+ */
+
+utils.loadPlatform("ti.platforms.ezdsp5535");
+
+bios.enableRealTimeAnalysis(prog);
+bios.enableMemoryHeaps(prog);
+bios.enableRtdx(prog);
+bios.enableTskManager(prog);
+
+/*
+ * Enable heaps in DARAM and define label SEG0 for heap usage.
+ */
+
+bios.DARAM.createHeap      = true;
+bios.DARAM.enableHeapLabel = true;
+bios.DARAM["heapLabel"]    = prog.extern("SEG0");
+bios.DARAM.heapSize        = 0x500;
+bios.MEM.BIOSOBJSEG = prog.get("DARAM");
+bios.MEM.MALLOCSEG = prog.get("DARAM");
+
+
+/*
+ *  Define the GBL memory model 
+ */
+
+bios.GBL.MEMORYMODEL = "LARGE";
+
+/*
+ * Create and initialize a LOG object
+ */
+
+var trace;
+trace         = bios.LOG.create("trace");
+trace.bufLen  = 1024;
+trace.logType = "circular";
+
+/*
+ * Set the buffer length of LOG_system buffer
+ */
+
+bios.LOG_system.bufLen = 512;
+
+bios.HWI.instance("HWI_INT15").useDispatcher = 1;
+bios.HWI.instance("HWI_INT15").interruptMask0 = "none";
+bios.HWI.instance("HWI_INT15").interruptMask1 = "none";
+bios.HWI.instance("HWI_INT15").fxn = prog.extern("HWI_I2S_Rx");
+bios.HWI.instance("HWI_INT14").fxn = prog.extern("HWI_I2S_Tx");
+bios.HWI.instance("HWI_INT14").useDispatcher = 1;
+bios.HWI.instance("HWI_INT14").interruptMask0 = "none";
+bios.HWI.instance("HWI_INT14").interruptMask1 = "none";
+bios.HWI.instance("HWI_INT14").fxn = prog.extern("HWI_I2S_Tx", "asm");
+bios.HWI.instance("HWI_INT14").fxn = prog.extern("HWI_I2S_Tx");
+bios.SWI.create("SWIPing");
+bios.SWI.instance("SWIPing").order = 1;
+bios.SWI.instance("SWIPing").comment = "this SWI will process ping samples";
+bios.SWI.instance("SWIPing").fxn = prog.extern("SWIPingFunc");
+bios.SWI.instance("SWIPing").priority = 7;
+bios.SWI.create("SWIPong");
+bios.SWI.instance("SWIPong").order = 2;
+bios.SWI.instance("SWIPong").priority = 7;
+bios.SWI.instance("SWIPong").fxn = prog.extern("SWIPongFunc");
+bios.PRD.create("PRD0");
+bios.PRD.instance("PRD0").order = 1;
+bios.PRD.instance("PRD0").period = 500;
+bios.PRD.instance("PRD0").fxn = prog.extern("PRD_myPeriodicFunc");
+bios.MBX.create("MBX0");
+bios.MBX.instance("MBX0").messageSize = 48;
+bios.MBX.instance("MBX0").length = 2;
+bios.TSK.create("TSKDisplay");
+bios.TSK.instance("TSKDisplay").order = 1;
+bios.TSK.instance("TSKDisplay").fxn = prog.extern("TSKDisplayFunc");
+bios.TSK.instance("TSKDisplay").priority = 7;
+bios.SWI.instance("PRD_swi").order = 1;
+bios.SWI.instance("KNL_swi").order = 2;
+bios.SWI.instance("SWIPong").order = 3;
+bios.SWI.instance("SWIPing").destroy();
+bios.SWI.instance("SWIPong").destroy();
+bios.TSK.instance("TSK_idle").order = 1;
+bios.TSK.instance("TSKDisplay").destroy();
+bios.MBX.instance("MBX0").destroy();
+bios.PRD.instance("PRD0").destroy();
+bios.IDL.create("IDLUserInterface");
+bios.IDL.instance("IDLUserInterface").order = 1;
+bios.IDL.instance("IDLUserInterface").fxn = prog.extern("IDL_UserInterface");
+bios.TSK.create("TSKAudioProcessing");
+bios.TSK.instance("TSKAudioProcessing").order = 2;
+bios.TSK.instance("TSKAudioProcessing").fxn = prog.extern("TSK_audProcess");
+bios.MBX.create("MBX_inSamples");
+bios.MBX.instance("MBX_inSamples").messageSize = 48;
+bios.MBX.instance("MBX_inSamples").length = 2;
+bios.MBX.instance("MBX_inSamples").destroy();
+bios.MBX.create("MBXinSamples");
+bios.MBX.instance("MBXinSamples").length = 2;
+bios.MBX.instance("MBXinSamples").messageSize = 48;
+bios.TSK.instance("TSKAudioProcessing").order = 1;
+bios.TSK.instance("TSK_idle").order = 2;
+bios.TSK.instance("TSKAudioProcessing").priority = 9;
+bios.TSK.instance("TSKAudioProcessing").priority = 11;
+bios.MBX.instance("MBXinSamples").length = 1;
+bios.TSK.instance("TSKAudioProcessing").priority = 6;
+bios.MBX.instance("MBXinSamples").length = 2;
+bios.MBX.create("MBXpostProcess");
+bios.MBX.instance("MBXpostProcess").messageSize = 48;
+bios.MBX.instance("MBXpostProcess").length = 2;
+bios.TSK.instance("TSKAudioProcessing").stackSize = 2048;
+bios.TSK.instance("TSK_idle").order = 1;
+bios.TSK.instance("TSKAudioProcessing").destroy();
+bios.TSK.create("TSK_audProc");
+bios.TSK.instance("TSK_audProc").order = 3;
+bios.TSK.instance("TSK_audProc").fxn = prog.extern("TSK_audProcess");
+bios.TSK.instance("TSK_audProc").stackSize = 4096;
+bios.IDL.instance("LNK_dataPump").order = 1;
+bios.IDL.instance("RTA_dispatcher").order = 2;
+bios.IDL.instance("IDL_cpuLoad").order = 3;
+bios.IDL.instance("PWRM_idleDomains").order = 4;
+bios.IDL.instance("IDLUserInterface").destroy();
+bios.TSK.instance("TSK_audProc").order = 1;
+bios.TSK.instance("TSK_idle").order = 2;
+bios.TSK.instance("TSK_audProc").priority = 3;
+bios.TSK.create("TSKUserInterface");
+bios.TSK.instance("TSKUserInterface").order = 4;
+bios.TSK.instance("TSKUserInterface").fxn = prog.extern("TSK_UserInterface");
+bios.PRD.create("PRDLED");
+bios.PRD.instance("PRDLED").order = 1;
+bios.PRD.instance("PRDLED").fxn = prog.extern("PRD_twoHzLED");
+bios.PRD.instance("PRDLED").period = 2000;
+bios.PRD.instance("PRDLED").period = 500;
+bios.TSK.instance("TSK_audProc").stackSize = 1024;
+bios.MBX.create("MBXdownsampled");
+bios.MBX.instance("MBXdownsampled").messageSize = 128;
+bios.TSK.instance("TSKUserInterface").order = 1;
+bios.TSK.instance("TSK_audProc").order = 3;
+bios.TSK.instance("TSKUserInterface").priority = 2;
+bios.TSK.create("TSKSpectrum");
+bios.TSK.instance("TSKSpectrum").order = 5;
+bios.TSK.instance("TSKSpectrum").fxn = prog.extern("TSK_Spectrum");
+bios.TSK.instance("TSK_audProc").order = 1;
+bios.TSK.instance("TSKUserInterface").order = 2;
+bios.TSK.instance("TSK_idle").order = 3;
+bios.TSK.instance("TSKSpectrum").order = 4;
+bios.TSK.instance("TSK_audProc").priority = 4;
+bios.TSK.instance("TSKSpectrum").order = 1;
+bios.TSK.instance("TSK_audProc").order = 2;
+bios.TSK.instance("TSKUserInterface").order = 3;
+bios.TSK.instance("TSK_idle").order = 4;
+bios.TSK.instance("TSKSpectrum").priority = 3;
+bios.HWI.instance("HWI_INT14").interruptMask0 = "all";
+bios.HWI.instance("HWI_INT14").interruptMask1 = "all";
+bios.HWI.instance("HWI_INT15").interruptMask0 = "all";
+bios.HWI.instance("HWI_INT15").interruptMask1 = "all";
+bios.MEM.CINITSEG = prog.get("SARAM");
+bios.MEM.CONSTSEG = prog.get("SARAM");
+bios.TSK.instance("TSKSpectrum").priority = 1;
+bios.TSK.instance("TSKSpectrum").priority = 3;
+bios.TSK.instance("TSKSpectrum").priority = 2;
+bios.TSK.instance("TSKUserInterface").priority = 3;
+bios.TSK.instance("TSKSpectrum").priority = 3;
+bios.TSK.instance("TSK_audProc").priority = 1;
+bios.TSK.instance("TSK_audProc").priority = 4;
+bios.TSK.instance("TSKUserInterface").priority = 2;
+bios.TSK.instance("TSKSpectrum").priority = 1;
+bios.TSK.instance("TSKSpectrum").priority = 3;
+bios.TSK.instance("TSKSpectrum").priority = 1;
+bios.TSK.instance("TSK_audProc").priority = 2;
+bios.TSK.instance("TSKSpectrum").priority = 2;
+bios.TSK.instance("TSK_audProc").priority = 4;
+bios.TSK.instance("TSKUserInterface").priority = 3;
+bios.TSK.instance("TSKUserInterface").priority = 1;
+bios.TSK.instance("TSKSpectrum").priority = 3;
+bios.TSK.instance("TSKUserInterface").priority = 2;
+bios.SEM.create("SEM0");
+bios.TSK.instance("TSKSpectrum").priority = 1;
+bios.TSK.instance("TSK_idle").order = 1;
+bios.TSK.instance("TSKSpectrum").destroy();
+bios.SEM.instance("SEM0").destroy();
+bios.PRD.instance("PRDLED").period = 5000;
+bios.PRD.instance("PRDLED").period = 1000;
+bios.PRD.instance("PRDLED").period = 250;
+bios.PRD.instance("PRDLED").period = 1000;
+bios.PRD.instance("PRDLED").period = 50;
+bios.PRD.instance("PRDLED").period = 500;
+bios.PRD.instance("PRDLED").period = 5000;
+bios.PRD.instance("PRDLED").period = 50;
+bios.PRD.instance("PRDLED").period = 5000;
+bios.PRD.instance("PRDLED").period = 50;
+bios.PRD.instance("PRDLED").period = 5000;
+bios.HWI.instance("HWI_INT13").fxn = prog.extern("HWI_UART");
+bios.HWI.instance("HWI_INT12").useDispatcher = 1;
+bios.HWI.instance("HWI_INT12").interruptMask0 = "all";
+bios.HWI.instance("HWI_INT12").interruptMask1 = "all";
+bios.HWI.instance("HWI_INT12").useDispatcher = 0;
+bios.HWI.instance("HWI_INT13").useDispatcher = 1;
+bios.HWI.instance("HWI_INT13").interruptMask0 = "all";
+bios.HWI.instance("HWI_INT13").interruptMask1 = "all";
+bios.HWI.instance("HWI_INT13").useDispatcher = 0;
+bios.HWI.instance("HWI_INT13").fxn = prog.extern("HWI_unused", "asm");
+bios.PRD.instance("PRDLED").period = 10;
+bios.PRD.instance("PRDLED").period = 100;
+bios.TSK.instance("TSKUserInterface").order = 1;
+bios.TSK.instance("TSK_idle").order = 2;
+bios.TSK.instance("TSK_audProc").order = 3;
+bios.TSK.instance("TSKUserInterface").priority = 5;
+bios.TSK.instance("TSKUserInterface").priority = 2;
+bios.PRD.instance("PRDLED").destroy();
+bios.PRD.create("PRD0_2HzLED");
+bios.PRD.instance("PRD0_2HzLED").order = 2;
+bios.PRD.instance("PRD0_2HzLED").period = 100;
+bios.PRD.instance("PRD0_2HzLED").destroy();
+bios.PRD.create("PRD_twoHzLED");
+bios.PRD.instance("PRD_twoHzLED").order = 3;
+bios.PRD.instance("PRD_twoHzLED").period = 100;
+bios.PRD.instance("PRD_twoHzLED").destroy();
+bios.PRD.create("PRDLED");
+bios.PRD.instance("PRDLED").order = 4;
+bios.PRD.instance("PRDLED").period = 100;
+bios.PRD.instance("PRDLED").fxn = prog.extern("PRD_twoHzLED", "asm");
+bios.PRD.instance("PRDLED").destroy();
+// !GRAPHICAL_CONFIG_TOOL_SCRIPT_INSERT_POINT!
+
+if (config.hasReportedError == false) {
+    prog.gen();
+}

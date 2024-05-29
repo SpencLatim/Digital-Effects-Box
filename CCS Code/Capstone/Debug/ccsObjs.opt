@@ -1,0 +1,1 @@
+"./Biocfg.obj" "./Biocfg_c.obj" "./Conversion.obj" "./Effects.obj" "./FIR.obj" "./Inits.obj" "./NCO.obj" "./aic3204.obj" "./ezdsp5535.obj" "./ezdsp5535_gpio.obj" "./ezdsp5535_i2c.obj" "./ezdsp5535_i2s.obj" "./ezdsp5535_led.obj" "./ezdsp5535_sar.obj" "./ezdsp5535_uart.obj" "./main.obj" -l"./Biocfg.cmd" -l"libc.a" -l"cslVC5505.lib" -l"ezdsp5535bsl.lib" -l"rts55x.lib" 
