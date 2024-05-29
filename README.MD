@@ -1,10 +1,19 @@
-## Zalando's README Template
 
-Clear documentation is critical to the success of your project. This checklist is meant to help you cover all your bases. Not every section/subsection will be relevant to your project; pick and choose what is. Inspired by READMEs of very successful projects like etcd.
+### Digital Effects Box
 
-Please copy-paste this into a new document and save as you build your READMEs. For alternative formats, you might create a [Structured README](https://github.com/shaloo/structuredreadme), which offers a thorough breakdown of optional README ingredients for you to consider. You might also take a look at [this similar checklist](https://github.com/cfpb/open-source-project-template); or check out [art-of-readme](https://github.com/noffle/art-of-readme).
+The code in this project accomplished the ability to apply digital effects to an audio signal, having been optimized for guitars specifically. This was one part of my 2024 EE capstone project building an all-in-one audio guitar rig. This project required many different components which will be explained later, as well as had a physical structure and is currently marked as complete due to current lack of those components.
 
-### Project Name/Intro
+Digital effects are very commonly used by musicians to both correct the music that they produce and create interesting sounds that fit their vision. This box allows the user to both the ability to apply audio effects and control that effect via a UI. This requires both ways to input and output audio and communication between the user interface and the audio processing elements. The audio effects actively coded in are tremolo/ring modulation, distortion, downsampling, bass boost, normal playthrough, and mute. The philosophy behind building this project was to absolutely focus on the fundamentals of this project, and to add anything extra like additional audio effects and UI features that wouldn't be classified as a must have. It was also agreed since upon for compartmentalization reasons to have separate processors for the audio effects and the UI, allowing multiple members to work individually. Lastly, the financials of the project were heavily considered, with as much cost-cutting parameters achieved for competition with more modern audio rigs.
+
+### Core Technical Concepts/Inspiration
+
+
+
+
+
+
+### Getting Started/Requirements/Prerequisites/Dependencies
+The C code requires a TMDX5535EZDSP board and TI-RTOS and was coded on the Code Composer Studio 6.1.1 IDE. There is python code there for the sole purpose of initializing the UART on the Raspberry Pi 4 for UI interface purposes, where the other functionalities of the raspberry pi were written by a fellow group member and are not included. 
 
 - Describe very briefly but clearly what the project does.
 - State if it is out-of-the-box user-friendly, so it’s clear to the user.
@@ -16,7 +25,7 @@ Please copy-paste this into a new document and save as you build your READMEs. F
 - Include badges.
 - If possible, include screenshots and demo videos.
 
-### Core Technical Concepts/Inspiration
+
 
 - Why does it exist?
 - Frame your project for the potential user. 
@@ -24,7 +33,7 @@ Please copy-paste this into a new document and save as you build your READMEs. F
 - Highlight the technical concepts that your project demonstrates or supports. Keep it very brief.
 - Keep it useful.
 
-### Getting Started/Requirements/Prerequisites/Dependencies
+
 Include any essential instructions for:
 - Getting it
 - Installing It
