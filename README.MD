@@ -11,8 +11,8 @@ The audio processing for this project requires a TMDX5535EZDSP board and TI-RTOS
 
 The Python Code document shows how me and one of my capstone teammates shared code. The Python code included in the PDF was for the sole purpose of initializing the UART on the Raspberry Pi 4 for UI interface purposes, where the other UI functionalities of the raspberry pi were written by a fellow group member and are included. It also includes the method used to convert characters to discrete values to better transmit data over. Due to restrictions in the number of ports that the RPi can use for UART and just RPI connectivity issues in general, the numbers recieved by the pots were converted to characters, stored in a text file, read by a Python program in an entirely different IDE, and sent through a minicom to the DSP board.
 
-![Digital Effects Box Enclosure](Physical-Look.JPG)
 
+https://github.com/SpencLatim/Digital-Effects-Box/blob/main/Physical%20Look.JPG
 
 
 
