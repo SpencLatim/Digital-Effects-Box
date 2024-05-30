@@ -9,7 +9,7 @@ The audio effects currently coded in are tremolo/ring modulation, distortion, do
 
 The audio processing for this project requires a TMDX5535EZDSP board and TI-RTOS and was coded on the Code Composer Studio 6.1.1 IDE. There are also many CSL functions created by TI and ezdsp5535 libraries that need to be included in the program to run, which can be found on the TI website here: https://www.ti.com/tool/TMDX5535EZDSP . Simply plug in the USB-A port of the DSP board to the computer, and build/debug the program. Once up and running, the input and output stereo jacks can be connected to an audio source and speaker, and the applied effects can be controlled via UART at an 115400 baud rate in the terminal in CCS. 
 
-The Python code included in the PDF was for the sole purpose of initializing the UART on the Raspberry Pi 4 for UI interface purposes, where the other UI functionalities of the raspberry pi were written by a fellow group member and are not included. It also includes the method used to convert characters to discrete values to better transmit data over. 
+The Python Code document shows how me and one of my capstone teammates shared code. The Python code included in the PDF was for the sole purpose of initializing the UART on the Raspberry Pi 4 for UI interface purposes, where the other UI functionalities of the raspberry pi were written by a fellow group member and are included. It also includes the method used to convert characters to discrete values to better transmit data over. 
 
 
 
