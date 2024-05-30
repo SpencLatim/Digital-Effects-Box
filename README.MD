@@ -13,7 +13,7 @@ The Python Code document shows how me and one of my capstone teammates shared co
 
 
 
-
+![Physical Enclosure](https://github.com/SpencLatim/Digital-Effects-Box/blob/main/Physical%20Look.JPG)
 
 
 
